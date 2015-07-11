@@ -1,0 +1,17 @@
+{
+  "name": "burns-brewtroller",
+  "version": "0.0.1",
+  "description": "HERMS brewery controller",
+  "main": "script.js",
+  "dependencies": {
+    "express": "^4.11.2",
+    "johnny-five": "latest",
+    "socket.io": "~0.9.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "author": "Scott Ryburn"
+}
