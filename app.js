@@ -45,7 +45,7 @@ http.listen(3000, function(){
 board = new five.Board({io: new raspi()});
 
 board.on("ready", function() {
-  pump1 = new five.Pin('GPIO17');
+  pump1 = new five.Pin('GPIO18');
   readTemp(); 
   /*var temperature = new five.Temperature({
       controller: "DS18B20",
