@@ -46,6 +46,8 @@ board = new five.Board({io: new raspi()});
 
 board.on("ready", function() {
   pump1 = new five.Pin('GPIO18');
+  boilElement = new five.Pin('GPIO12');
+  boilElement = new five.Pin('GPIO13');
   readTemp(); 
   /*var temperature = new five.Temperature({
       controller: "DS18B20",
@@ -78,8 +80,16 @@ board.on("ready", function() {
       mashPid.compute(); 
 
       boilPid.setOutput(boilPower * cycletime /100);
-      if (boilPid.timeProportionalOutput == true) socket.emit('boilElementState', 'On');
-      else socket.emit('boilElementState', 'Off');
+      if (boilPid.timeProportionalOutput == true){
+        socket.emit('boilElementState', 'On');
+        boilElement.high();
+      } 
+      else{
+        socket.emit('boilElementState', 'Off');
+        boilElement.low();
+
+      } 
+
       
       if (mashPid.timeProportionalOutput == true) socket.emit('mashElementState', 'On');
       else socket.emit('mashElementState', 'Off');
@@ -117,7 +127,7 @@ board.on("ready", function() {
 });
 
 function readTemp () {
-  ds18b20.temperature('28-00000494e3ff', function(err, value) {
+  ds18b20.temperature('28-0000067455af', function(err, value) {
     temperature = value;
     readTemp();
   });
