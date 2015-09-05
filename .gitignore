@@ -34,3 +34,4 @@ node_modules/plotly
 node_modules/raspi-io
 node_modules/socket.io
 node_modules/wiring-pi
+node_modules/wiringpi
