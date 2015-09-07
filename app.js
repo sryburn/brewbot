@@ -47,7 +47,7 @@ board = new five.Board({io: new raspi()});
 board.on("ready", function() {
   pump1 = new five.Pin('GPIO18');
   boilElement = new five.Pin('GPIO12');
-  boilElement = new five.Pin('GPIO13');
+  mashElement = new five.Pin('GPIO13');
   readTemp(); 
   /*var temperature = new five.Temperature({
       controller: "DS18B20",

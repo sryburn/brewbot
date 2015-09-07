@@ -11,25 +11,15 @@ sensor.sensors(function(err, ids) {
     console.log('Can not get sensor IDs', err);
   } else {
     console.log(ids);
-    for (var id in ids) {
-      sensor.temperature(ids[id], function(err, result) {
+    for (var i=0; i<ids.length; i++) {
+      var sensorId = ids[i];
+      sensor.temperature(ids[i], function(err, result) {
         if (err) {
           console.log('Can not get temperature from sensor', err);
         } else {
-          console.log('Sensor ' + ids[id] + ' :', result);
+          console.log('Sensor ' + sensorId + ' :', result);
         }
       });
-    }
-  }
-});
-
-sensor.sensors(function(err, ids) {
-  if (err) {
-    console.log('Can not get sensor IDs', err);
-  } else {
-    console.log(ids);
-    for (var id in ids) {
-        console.log('Sensor ' + ids[id] + ' :' + sensor.temperature(ids[id]));
     }
   }
 });

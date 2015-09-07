@@ -35,3 +35,4 @@ node_modules/raspi-io
 node_modules/socket.io
 node_modules/wiring-pi
 node_modules/wiringpi
+node_modules/ds18x20

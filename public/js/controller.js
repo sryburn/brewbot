@@ -83,9 +83,24 @@ $(document).ready(function() {
     else $('input[name="pump1"]').bootstrapSwitch('state', false, true);            
   });
 
-  socket.on('temperature', function(t) {
+  socket.on('mashTemp', function(t) {
    // console.log(t); 
-    $('#temp').html(t);            
+    $('#mashTemp').html(t);            
+  });
+
+  socket.on('hltTemp', function(t) {
+   // console.log(t); 
+    $('#hltTemp').html(t);            
+  });
+
+  socket.on('boilTemp', function(t) {
+   // console.log(t); 
+    $('#boilTemp').html(t);            
+  });
+
+  socket.on('chillerTemp', function(t) {
+   // console.log(t); 
+    $('#chillerTemp').html(t);            
   });
 
   socket.on('mashSet', function(mt) {
