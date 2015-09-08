@@ -43,7 +43,7 @@ var moment = require('moment');
 var initdata = [{x:[], y:[], stream:{token:'sampoxq6xt', maxpoints:200}, name:'Mash Temp'}, {x:[], y:[], stream:{token:'120n8aiha1', maxpoints:200}, name:'Set Point'}];
 var layout = {xaxis: {title:'Time'}, yaxis: {title: 'Temperature'}, showlegend: true, title: 'Mash Control'};
 var initlayout = {layout : layout, fileopt : 'overwrite', filename : moment().format("YYYY-MM-DD h:mm:ss") + ' Mash'};
-
+var chartUrl;
 
 raspi.PWM.setMode(0);
 raspi.PWM.setClockDivisor(2);
@@ -65,6 +65,7 @@ io.sockets.on('connection', function (socket) {
   socket.emit('mashSet', mashSet);
   socket.emit('pump1Voltage', pump1Voltage);
   socket.emit('pump2Voltage', pump2Voltage);
+  socket.emit('chartUrl', chartUrl);
 
   var emitTemps = function(){
     socket.emit('mashTemp', Number(mashTemp).toFixed(1));
@@ -164,6 +165,8 @@ monitorTemps();
 plotly.plot(initdata, initlayout, function (err, msg) {
     if (err) return console.log(err);
     console.log(msg);
+    console.log(msg.url);
+    chartUrl = msg.url + ".embed"
 
     var stream1 = plotly.stream('sampoxq6xt');
     var stream2 = plotly.stream('120n8aiha1');

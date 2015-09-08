@@ -223,6 +223,10 @@ $(document).ready(function() {
     $('#mashSet').html(mt);            
   });
 
+  socket.on('chartUrl', function(url) {
+    $('#chart').attr('src', url)           
+  });
+
   socket.on('mashElementState', function(mo) {
       if (mo == 'on') $('#mashLabel').css('border-bottom', '1px solid red');
       else $('#mashLabel').css('border-bottom', '1px solid white');
