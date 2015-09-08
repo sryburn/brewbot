@@ -56,7 +56,7 @@
          Mash Temp: <span id="mashTemp">...</span><span>°C
         </div>
       </div>  
-          
+
       <div class="row">
         <div class="col-md-12 text-center h3">
             Mash Set:
@@ -91,8 +91,40 @@
       </div>
 
       <div class="row">
-        <div class="col-md-12 text-center">
-          <input type="checkbox" name="pump1" data-label-text="Pump 1" data-size="large" data-label-width="67">
+        <div class="col-md-12 text-center h3">
+            Pump 1 voltage:
+            <button type="button" class="btn btn-default btn-lg" id="pump1Off">
+              <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default btn-lg" id="pump1VoltageMinus">
+              <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+            </button>
+            <span id="pump1VoltageSet">0</span>
+            <button type="button" class="btn btn-default btn-lg" id="pump1VoltagePlus">
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default btn-lg" id="pump1On">
+              <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+            </button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-12 text-center h3">
+            Pump 2 voltage:
+            <button type="button" class="btn btn-default btn-lg" id="pump2Off">
+              <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default btn-lg" id="pump2VoltageMinus">
+              <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
+            </button>
+            <span id="pump2VoltageSet">0</span>
+            <button type="button" class="btn btn-default btn-lg" id="pump2VoltagePlus">
+              <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="btn btn-default btn-lg" id="pump2On">
+              <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+            </button>
         </div>
       </div>
          

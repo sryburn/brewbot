@@ -52,7 +52,7 @@
 ;(function() {
 
 	var timer = new Timer(),
-		socket = io.connect('http://10.1.1.3');
+		socket = io.connect();
 	
 	socket.on('currentEndTime', function (data) {
 		//this is the full date time in ms.
