@@ -41,13 +41,13 @@ $(document).ready(function() {
   $("#mashPlus").on("mousedown touchstart", function (mp) {
     mp.preventDefault();
     mashSet = $('#mashSet').html();
-    if (mashSet < 100) mashSet++;
+    if (mashSet < 100) mashSet+=0.1;
       $("#mashSet").html(mashSet);
       to = setTimeout(function () {
           int = setInterval(function () {
-              if (mashSet < 100) mashSet++;
+              if (mashSet < 100) mashSet+=0.1;
               $("#mashSet").html(mashSet);
-          }, 75);
+          }, 20);
       }, 500);
     }).on("mouseup touchend", function () {
       socket.emit("setMashTemp", mashSet);
@@ -58,13 +58,13 @@ $(document).ready(function() {
   $("#mashMinus").on("mousedown touchstart", function (mm) {
     mm.preventDefault();
     mashSet = $('#mashSet').html();
-    if (mashSet > 0) mashSet--;
+    if (mashSet > 0) mashSet-=0.1;
       $("#mashSet").html(mashSet);
       to = setTimeout(function () {
           int = setInterval(function () {
-              if (mashSet > 0) mashSet--;
+              if (mashSet > 0) mashSet-=0.1;
               $("#mashSet").html(mashSet);
-          }, 75);
+          }, 20);
       }, 500);
     }).on("mouseup touchend", function () {
       socket.emit("setMashTemp", mashSet);
