@@ -21,23 +21,17 @@ only guest = no
 --sudo apt-get install git-core
 
 -install node
---wget http://node-arm.herokuapp.com/node_0.10.36-1_armhf.deb
+--curl -sL https://deb.nodesource.com/setup_0.12 | sudo bash -
+--sudo apt-get install -y build-essential python-dev python-rpi.gpio nodejs
+OR
+--wget http://node-arm.herokuapp.com/node_0.10.36-1_armhf.deb OR wget http://node-arm.herokuapp.com/node_latest_armhf.deb
 --sudo dpkg -i node_0.10.36-1_armhf.deb
 --node -v
-
--install wiringpi ??
---git clone git://git.drogon.net/wiringPi
---cd wiringPi
---./build
 
 -install brewbot
 --git clone https://github.com/sryburn/brewbot.git
 --cd brewbot
 --npm install
-
-
-npm install plotly
-npm install moment
 
 -install 1-wire
 sudo nano /boot/config.txt and then scrolling to the
@@ -51,3 +45,9 @@ sudo modprobe w1-gpio
 sudo modprobe w1-therm
 cd /sys/bus/w1/devices
 ls
+
+
+HLT		 28-000006740ce7	blue
+MASH     28-000006744eb8	black
+BOIL  	 28-00000673b5b3	green
+CHILLER  28-000006743ab7	red

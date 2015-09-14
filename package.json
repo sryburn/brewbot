@@ -4,11 +4,11 @@
   "description": "HERMS brewery controller",
   "main": "script.js",
   "dependencies": {
-    "ds18b20": "0.0.2",
+    "ds18x20": "0.2.0",
     "express": "^4.11.2",
-    "johnny-five": "latest",
-    "raspi-io": "^3.3.0",
-    "socket.io": "~0.9.13",
+    "moment": "^2.10.6",
+    "plotly": "^1.0.2",
+    "socket.io": "^0.9.17",
     "wiring-pi": "^2.0.0"
   },
   "devDependencies": {},

@@ -25,14 +25,10 @@ build/Release
 # Dependency directory
 # https://docs.npmjs.com/misc/faq#should-i-check-my-node-modules-folder-into-git
 node_modules/express
-node_modules/ds18b20
 node_modules/install
-node_modules/johnny-five
 node_modules/moment
 node_modules/npm
 node_modules/plotly
-node_modules/raspi-io
 node_modules/socket.io
 node_modules/wiring-pi
-node_modules/wiringpi
 node_modules/ds18x20

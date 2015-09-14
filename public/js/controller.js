@@ -4,6 +4,66 @@ $(document).ready(function() {
   var to = null;
   var int = null;
 
+  socket.on('mashTemp', function(t) {
+   // console.log(t); 
+    $('#mashTemp').html(t);            
+  });
+
+  socket.on('hltTemp', function(t) {
+   // console.log(t); 
+    $('#hltTemp').html(t);            
+  });
+
+  socket.on('boilTemp', function(t) {
+   // console.log(t); 
+    $('#boilTemp').html(t);            
+  });
+
+  socket.on('chillerTemp', function(t) {
+   // console.log(t); 
+    $('#chillerTemp').html(t);            
+  });
+
+  socket.on('mashSet', function(mt) {
+    console.log("mash set: " + mt); 
+    $('#mashSet').html(mt);            
+  });
+
+  socket.on('chartUrl', function(url) {
+    $('#chart').attr('src', url)           
+  });
+
+  socket.on('mashElementState', function(mo) {
+      if (mo == 'on') $('#mashLabel').css('border-bottom', '1px solid red');
+      else $('#mashLabel').css('border-bottom', '1px solid white');
+  });
+
+  socket.on('boilElementState', function(bo) {
+      if (bo == 'on') $('#boilLabel').css('border-bottom', '1px solid red');
+      else $('#boilLabel').css('border-bottom', '1px solid white');
+  });
+
+  socket.on('boilPower', function(bp){
+    $('#boilPower').html(bp);
+  })
+
+  socket.on('mashPower', function(p) {
+   // console.log(t); 
+    $('#mashPower').html(p);            
+  });
+
+  socket.on('pump1Voltage', function(p1v) {
+   // console.log(t); 
+    $('#pump1VoltageSet').html(p1v); 
+    console.log('received: '+ p1v);           
+  });
+
+  socket.on('pump2Voltage', function(p2v) {
+   // console.log(t); 
+    $('#pump2VoltageSet').html(p2v); 
+    console.log('received: '+ p2v);           
+  });
+  
   $("#boilPlus").on("mousedown touchstart", function (bp) {
     bp.preventDefault();
     boilVal = $('#boilPower').html();
@@ -11,7 +71,8 @@ $(document).ready(function() {
       $("#boilPower").html(boilVal);
       to = setTimeout(function () {
           int = setInterval(function () {
-              if (boilVal < 100) boilVal++;
+              if (boilVal < 100) boilVal+=5;
+              if (boilVal > 100) boilVal=100;
               $("#boilPower").html(boilVal);
           }, 75);
       }, 500);
@@ -28,7 +89,8 @@ $(document).ready(function() {
       $("#boilPower").html(boilVal);
       to = setTimeout(function () {
           int = setInterval(function () {
-              if (boilVal > 0) boilVal--;
+              if (boilVal > 0) boilVal-=5;
+              if (boilVal < 0) boilVal=0;
               $("#boilPower").html(boilVal);
           }, 75);
       }, 500);
@@ -40,14 +102,21 @@ $(document).ready(function() {
 
   $("#mashPlus").on("mousedown touchstart", function (mp) {
     mp.preventDefault();
-    mashSet = $('#mashSet').html();
-    if (mashSet < 100) mashSet+=0.1;
+    mashSet = parseFloat($('#mashSet').html());
+    if (mashSet < 100) (mashSet+= 0.1);
+      mashSet = mashSet.toFixed(2);
+      mashSet = parseFloat(mashSet);
       $("#mashSet").html(mashSet);
+      console.log(mashSet);
       to = setTimeout(function () {
           int = setInterval(function () {
-              if (mashSet < 100) mashSet+=0.1;
+              if (mashSet < 100) (mashSet+= 0.5);
+              if (mashSet > 100) (mashSet=100);
+              mashSet = mashSet.toFixed(2);
+              mashSet = parseFloat(mashSet);
               $("#mashSet").html(mashSet);
-          }, 20);
+              console.log(mashSet);
+          }, 25);
       }, 500);
     }).on("mouseup touchend", function () {
       socket.emit("setMashTemp", mashSet);
@@ -57,14 +126,21 @@ $(document).ready(function() {
 
   $("#mashMinus").on("mousedown touchstart", function (mm) {
     mm.preventDefault();
-    mashSet = $('#mashSet').html();
-    if (mashSet > 0) mashSet-=0.1;
+    mashSet = parseFloat($('#mashSet').html());
+    if (mashSet > 0) (mashSet-= 0.1);
+      mashSet = mashSet.toFixed(2);
+      mashSet = parseFloat(mashSet);
       $("#mashSet").html(mashSet);
+      console.log(mashSet);
       to = setTimeout(function () {
           int = setInterval(function () {
-              if (mashSet > 0) mashSet-=0.1;
+              if (mashSet > 0) (mashSet-= 0.5);
+              if (mashSet < 0) (mashSet = 0);
+              mashSet = mashSet.toFixed(2);
+              mashSet = parseFloat(mashSet);
               $("#mashSet").html(mashSet);
-          }, 20);
+              console.log(mashSet);
+          }, 25);
       }, 500);
     }).on("mouseup touchend", function () {
       socket.emit("setMashTemp", mashSet);
@@ -196,66 +272,6 @@ $(document).ready(function() {
       console.log('emitting: '+ pump2VoltageSet);
       clearTimeout(to);
       clearInterval(int);
-  });
-
-  socket.on('mashTemp', function(t) {
-   // console.log(t); 
-    $('#mashTemp').html(t);            
-  });
-
-  socket.on('hltTemp', function(t) {
-   // console.log(t); 
-    $('#hltTemp').html(t);            
-  });
-
-  socket.on('boilTemp', function(t) {
-   // console.log(t); 
-    $('#boilTemp').html(t);            
-  });
-
-  socket.on('chillerTemp', function(t) {
-   // console.log(t); 
-    $('#chillerTemp').html(t);            
-  });
-
-  socket.on('mashSet', function(mt) {
-   // console.log(t); 
-    $('#mashSet').html(mt);            
-  });
-
-  socket.on('chartUrl', function(url) {
-    $('#chart').attr('src', url)           
-  });
-
-  socket.on('mashElementState', function(mo) {
-      if (mo == 'on') $('#mashLabel').css('border-bottom', '1px solid red');
-      else $('#mashLabel').css('border-bottom', '1px solid white');
-  });
-
-  socket.on('boilElementState', function(bo) {
-      if (bo == 'on') $('#boilLabel').css('border-bottom', '1px solid red');
-      else $('#boilLabel').css('border-bottom', '1px solid white');
-  });
-
-  socket.on('boilPower', function(bp){
-    $('#boilPower').html(bp);
-  })
-
-  socket.on('mashPower', function(p) {
-   // console.log(t); 
-    $('#mashPower').html(p);            
-  });
-
-  socket.on('pump1Voltage', function(p1v) {
-   // console.log(t); 
-    $('#pump1VoltageSet').html(p1v); 
-    console.log('received: '+ p1v);           
-  });
-
-  socket.on('pump2Voltage', function(p2v) {
-   // console.log(t); 
-    $('#pump2VoltageSet').html(p2v); 
-    console.log('received: '+ p2v);           
   });
 
 });  
