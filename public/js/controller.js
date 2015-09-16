@@ -4,24 +4,22 @@ $(document).ready(function() {
   var to = null;
   var int = null;
 
-  socket.on('mashTemp', function(t) {
-   // console.log(t); 
-    $('#mashTemp').html(t);            
+  socket.on('temps', function(t) {
+    console.log("temps: " + JSON.stringify(t)); 
+    $('#mashTemp').html(Number(t.mashTemp).toFixed(1));
+    $('#hltTemp').html(Number(t.hltTemp).toFixed(1));
+    $('#boilTemp').html(Number(t.boilTemp).toFixed(1)); 
+    $('#chillerTemp').html(Number(t.chillerTemp).toFixed(1));             
   });
 
-  socket.on('hltTemp', function(t) {
-   // console.log(t); 
-    $('#hltTemp').html(t);            
-  });
+  socket.on('pidOutput', function(po) {
+      if (po.mashElementState == 'on') $('#mashLabel').css('border-bottom', '1px solid red');
+      else $('#mashLabel').css('border-bottom', '1px solid white');
 
-  socket.on('boilTemp', function(t) {
-   // console.log(t); 
-    $('#boilTemp').html(t);            
-  });
+      if (po.boilElementState == 'on') $('#boilLabel').css('border-bottom', '1px solid red');
+      else $('#boilLabel').css('border-bottom', '1px solid white');
 
-  socket.on('chillerTemp', function(t) {
-   // console.log(t); 
-    $('#chillerTemp').html(t);            
+      $('#mashPower').html(po.mashPower); 
   });
 
   socket.on('mashSet', function(mt) {
@@ -31,26 +29,11 @@ $(document).ready(function() {
 
   socket.on('chartUrl', function(url) {
     $('#chart').attr('src', url)           
-  });
-
-  socket.on('mashElementState', function(mo) {
-      if (mo == 'on') $('#mashLabel').css('border-bottom', '1px solid red');
-      else $('#mashLabel').css('border-bottom', '1px solid white');
-  });
-
-  socket.on('boilElementState', function(bo) {
-      if (bo == 'on') $('#boilLabel').css('border-bottom', '1px solid red');
-      else $('#boilLabel').css('border-bottom', '1px solid white');
-  });
+  });  
 
   socket.on('boilPower', function(bp){
     $('#boilPower').html(bp);
   })
-
-  socket.on('mashPower', function(p) {
-   // console.log(t); 
-    $('#mashPower').html(p);            
-  });
 
   socket.on('pump1Voltage', function(p1v) {
    // console.log(t); 
