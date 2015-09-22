@@ -61,16 +61,14 @@ http.listen(3000, function(){
 });
 
 io.sockets.on('connection', function (socket) {
+  console.log("new connection");
 
-  var emitInitialValues = function(){  
-    socket.emit('currentEndTime', {time: timer.getEndTime() });
-    socket.emit('boilPower', boilPower);
-    socket.emit('mashSet', mashSet);
-    socket.emit('pump1Voltage', pump1Voltage);
-    socket.emit('pump2Voltage', pump2Voltage);
-    socket.emit('chartUrl', chartUrl);
-  }
-  setTimeout(emitInitialValues,1000);  //horrible hack to ensure client receives initial values
+  socket.emit('currentEndTime', {time: timer.getEndTime() });
+  socket.emit('boilPower', boilPower);
+  socket.emit('mashSet', mashSet);
+  socket.emit('pump1Voltage', pump1Voltage);
+  socket.emit('pump2Voltage', pump2Voltage);
+  socket.emit('chartUrl', chartUrl);
   
   emitter.on("newTemps", function (temps) { 
     socket.emit('temps', temps);

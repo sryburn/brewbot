@@ -76,6 +76,7 @@
 			timer.timeRemaining();
 			$('#timer').text(timer.format());
 		}
+		else $('#timer').text('00:00');
 	},100);
 
 })();

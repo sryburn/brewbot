@@ -1,8 +1,8 @@
 {
-  "name": "burns-brewtroller",
+  "name": "brewbot",
   "version": "0.0.1",
   "description": "HERMS brewery controller",
-  "main": "script.js",
+  "main": "brewbot.js",
   "dependencies": {
     "ds18x20": "0.2.0",
     "express": "^4.11.2",

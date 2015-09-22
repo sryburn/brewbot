@@ -1,8 +1,51 @@
 $(document).ready(function() {
   var socket = io.connect();
-  var buttonDiv = document.querySelector('#button');
-  var to = null;
-  var int = null;
+  var to, int;
+
+ function onOff (event){
+    event.preventDefault();
+    $(event.data.htmlElement).html(event.data.payload);
+    socket.emit(event.data.message, event.data.payload);
+    console.log('emitting: '+ event.data.message + ' ' + event.data.payload);
+  }
+
+  function upDownPress (event){
+    var max = event.data.max || 100;
+    var min = event.data.min || 0;
+    var direction = event.data.direction || 1;
+    var slowIncrement = (event.data.slowIncrement * direction) || (1* direction);
+    var fastIncrement = (event.data.fastIncrement * direction) || (5* direction);
+    var precision = event.data.precision || 0;
+    var fastIncrementTime = event.data.fastIncrementTime || 75;
+
+    event.preventDefault();
+    value = parseFloat($(event.data.htmlElement).html());
+    value += slowIncrement;
+    if (value < min) value = min;
+    if (value > max) value = max;
+    value = value.toFixed(precision);
+    value = parseFloat(value);
+    $(event.data.htmlElement).html(value);
+
+    to = setTimeout(function () {
+      int = setInterval(function () {
+        value += fastIncrement;
+        if (value < min) value = min;
+        if (value > max) value = max;
+        value = value.toFixed(precision);
+        value = parseFloat(value);
+        $(event.data.htmlElement).html(value);
+      }, fastIncrementTime);
+    }, 500);
+  }
+
+  function upDownRelease(event) {
+    value = parseFloat($(event.data.htmlElement).html());
+    socket.emit(event.data.message, value);
+    console.log('emitting: '+ value);
+    clearTimeout(to);
+    clearInterval(int);
+  };
 
   socket.on('temps', function(t) {
     console.log("temps: " + JSON.stringify(t)); 
@@ -36,226 +79,123 @@ $(document).ready(function() {
   })
 
   socket.on('pump1Voltage', function(p1v) {
-   // console.log(t); 
     $('#pump1VoltageSet').html(p1v); 
     console.log('received: '+ p1v);           
   });
 
   socket.on('pump2Voltage', function(p2v) {
-   // console.log(t); 
     $('#pump2VoltageSet').html(p2v); 
     console.log('received: '+ p2v);           
   });
   
-  $("#boilPlus").on("mousedown touchstart", function (bp) {
-    bp.preventDefault();
-    boilVal = $('#boilPower').html();
-    if (boilVal < 100) boilVal++;
-      $("#boilPower").html(boilVal);
-      to = setTimeout(function () {
-          int = setInterval(function () {
-              if (boilVal < 100) boilVal+=5;
-              if (boilVal > 100) boilVal=100;
-              $("#boilPower").html(boilVal);
-          }, 75);
-      }, 500);
-    }).on("mouseup touchend", function () {
-      socket.emit("setBoilPower", boilVal);
-      clearTimeout(to);
-      clearInterval(int);
-  });
-
-  $("#boilMinus").on("mousedown touchstart", function (bm) {
-    bm.preventDefault();
-    boilVal = $('#boilPower').html();
-    if (boilVal > 0) boilVal--;
-      $("#boilPower").html(boilVal);
-      to = setTimeout(function () {
-          int = setInterval(function () {
-              if (boilVal > 0) boilVal-=5;
-              if (boilVal < 0) boilVal=0;
-              $("#boilPower").html(boilVal);
-          }, 75);
-      }, 500);
-    }).on("mouseup touchend", function () {
-      socket.emit("setBoilPower", boilVal);
-      clearTimeout(to);
-      clearInterval(int);
-  });
-
-  $("#mashPlus").on("mousedown touchstart", function (mp) {
-    mp.preventDefault();
-    mashSet = parseFloat($('#mashSet').html());
-    if (mashSet < 100) (mashSet+= 0.1);
-      mashSet = mashSet.toFixed(2);
-      mashSet = parseFloat(mashSet);
-      $("#mashSet").html(mashSet);
-      console.log(mashSet);
-      to = setTimeout(function () {
-          int = setInterval(function () {
-              if (mashSet < 100) (mashSet+= 0.5);
-              if (mashSet > 100) (mashSet=100);
-              mashSet = mashSet.toFixed(2);
-              mashSet = parseFloat(mashSet);
-              $("#mashSet").html(mashSet);
-              console.log(mashSet);
-          }, 25);
-      }, 500);
-    }).on("mouseup touchend", function () {
-      socket.emit("setMashTemp", mashSet);
-      clearTimeout(to);
-      clearInterval(int);
-  });
-
-  $("#mashMinus").on("mousedown touchstart", function (mm) {
-    mm.preventDefault();
-    mashSet = parseFloat($('#mashSet').html());
-    if (mashSet > 0) (mashSet-= 0.1);
-      mashSet = mashSet.toFixed(2);
-      mashSet = parseFloat(mashSet);
-      $("#mashSet").html(mashSet);
-      console.log(mashSet);
-      to = setTimeout(function () {
-          int = setInterval(function () {
-              if (mashSet > 0) (mashSet-= 0.5);
-              if (mashSet < 0) (mashSet = 0);
-              mashSet = mashSet.toFixed(2);
-              mashSet = parseFloat(mashSet);
-              $("#mashSet").html(mashSet);
-              console.log(mashSet);
-          }, 25);
-      }, 500);
-    }).on("mouseup touchend", function () {
-      socket.emit("setMashTemp", mashSet);
-      clearTimeout(to);
-      clearInterval(int);
-  });
-
-  $('#pump1On').on("click", function(p1on){
-    p1on.preventDefault();
-    pump1VoltageSet = 5;
-    $("#pump1VoltageSet").html(pump1VoltageSet);
-    socket.emit("setPump1Voltage", pump1VoltageSet);
-    console.log('emitting: '+ pump1VoltageSet);
-  });
-
-  $('#pump1Off').on("click", function(p1off){
-    p1off.preventDefault();
-    pump1VoltageSet = 0;
-    $("#pump1VoltageSet").html(pump1VoltageSet);
-    socket.emit("setPump1Voltage", pump1VoltageSet);
-    console.log('emitting: '+ pump1VoltageSet);
-  });
-
-  $('#pump2On').on("click", function(p2on){
-    p2on.preventDefault();
-    pump2VoltageSet = 5;
-    $("#pump2VoltageSet").html(pump2VoltageSet);
-    socket.emit("setPump2Voltage", pump2VoltageSet);
-    console.log('emitting: '+ pump2VoltageSet);
-  });
-
-  $('#pump2Off').on("click", function(p2off){
-    p2off.preventDefault();
-    pump2VoltageSet = 0;
-    $("#pump2VoltageSet").html(pump2VoltageSet);
-    socket.emit("setPump2Voltage", pump2VoltageSet);
-    console.log('emitting: '+ pump2VoltageSet);
-  });
+  $('#pump1On').click({htmlElement: "#pump1VoltageSet", message: "setPump1Voltage", payload: 5}, onOff);
+  $('#pump1Off').click({htmlElement: "#pump1VoltageSet", message: "setPump1Voltage", payload: 0}, onOff);
+  $('#pump2On').click({htmlElement: "#pump2VoltageSet", message: "setPump2Voltage", payload: 5}, onOff);
+  $('#pump2Off').click({htmlElement: "#pump2VoltageSet", message: "setPump2Voltage", payload: 0}, onOff);
 
   $("#pump1On, #pump1Off, #pump2On, #pump2Off").mouseup(function(){
     $(this).blur();
   })
 
-  $("#pump1VoltagePlus").on("mousedown touchstart", function (p1p) {
-    p1p.preventDefault();
-    pump1VoltageSet = parseFloat($('#pump1VoltageSet').html());
+  $("#pump1VoltagePlus")
+  .on("mousedown touchstart", {
+    htmlElement: "#pump1VoltageSet", 
+    max: 5, 
+    fastIncrement: 0.1,
+    slowIncrement: 0.1, 
+    precision: 2 
+  }, upDownPress)
+  .on("mouseup touchend", {
+    message: "setPump1Voltage",
+    htmlElement: "#pump1VoltageSet"
+  }, upDownRelease);
 
-    if (pump1VoltageSet < 5) (pump1VoltageSet += 0.1);
-      pump1VoltageSet = pump1VoltageSet.toFixed(2);
-      pump1VoltageSet = parseFloat(pump1VoltageSet);
-      $("#pump1VoltageSet").html(pump1VoltageSet);
-      to = setTimeout(function () {
-          int = setInterval(function () {
-              if (pump1VoltageSet < 5) (pump1VoltageSet += 0.1);
-              pump1VoltageSet = pump1VoltageSet.toFixed(2);
-              pump1VoltageSet = parseFloat(pump1VoltageSet);
-              $("#pump1VoltageSet").html(pump1VoltageSet);
-          }, 75);
-      }, 500);
-    }).on("mouseup touchend", function () {
-      socket.emit("setPump1Voltage", pump1VoltageSet);
-      console.log('emitting: '+ pump1VoltageSet);
-      clearTimeout(to);
-      clearInterval(int);
-  });
+  $("#pump1VoltageMinus")
+  .on("mousedown touchstart", {
+    htmlElement: "#pump1VoltageSet", 
+    max: 5,
+    fastIncrement: 0.1,
+    slowIncrement: 0.1,
+    direction: -1,  
+    precision: 2 
+  }, upDownPress)
+  .on("mouseup touchend", {
+    message: "setPump1Voltage",
+    htmlElement: "#pump1VoltageSet"
+  }, upDownRelease);
 
-  $("#pump1VoltageMinus").on("mousedown touchstart", function (p1m) {
-    p1m.preventDefault();
-    pump1VoltageSet = parseFloat($('#pump1VoltageSet').html());
-    if (pump1VoltageSet > 0) pump1VoltageSet -= 0.1;
-      pump1VoltageSet = pump1VoltageSet.toFixed(2);
-      pump1VoltageSet = parseFloat(pump1VoltageSet);
-      $("#pump1VoltageSet").html(pump1VoltageSet);
-      to = setTimeout(function () {
-          int = setInterval(function () {
-              if (pump1VoltageSet > 0) pump1VoltageSet -= 0.1;
-              pump1VoltageSet = pump1VoltageSet.toFixed(2);
-              pump1VoltageSet = parseFloat(pump1VoltageSet);
-              $("#pump1VoltageSet").html(pump1VoltageSet);
-          }, 75);
-      }, 500);
-    }).on("mouseup touchend", function () {
-      socket.emit("setPump1Voltage", pump1VoltageSet);
-      console.log('emitting: '+ pump1VoltageSet);
-      clearTimeout(to);
-      clearInterval(int);
-  });
+  $("#pump2VoltagePlus")
+  .on("mousedown touchstart", {
+    htmlElement: "#pump2VoltageSet", 
+    max: 5, 
+    fastIncrement: 0.1,
+    slowIncrement: 0.1, 
+    precision: 2
+  }, upDownPress)
+  .on("mouseup touchend", {
+    message: "setPump2Voltage",
+    htmlElement: "#pump2VoltageSet"
+  }, upDownRelease);
 
-  $("#pump2VoltagePlus").on("mousedown touchstart", function (p2p) {
-    p2p.preventDefault();
-    pump2VoltageSet = parseFloat($('#pump2VoltageSet').html());
+  $("#pump2VoltageMinus")
+  .on("mousedown touchstart", {
+    htmlElement: "#pump2VoltageSet", 
+    max: 5,
+    fastIncrement: 0.1,
+    slowIncrement: 0.1,
+    direction: -1,   
+    precision: 2
+  }, upDownPress)
+  .on("mouseup touchend", {
+    message: "setPump2Voltage",
+    htmlElement: "#pump2VoltageSet"
+  }, upDownRelease);
 
-    if (pump2VoltageSet < 5) (pump2VoltageSet += 0.1);
-      pump2VoltageSet = pump2VoltageSet.toFixed(2);
-      pump2VoltageSet = parseFloat(pump2VoltageSet);
-      $("#pump2VoltageSet").html(pump2VoltageSet);
-      to = setTimeout(function () {
-          int = setInterval(function () {
-              if (pump2VoltageSet < 5) (pump2VoltageSet += 0.1);
-              pump2VoltageSet = pump2VoltageSet.toFixed(2);
-              pump2VoltageSet = parseFloat(pump2VoltageSet);
-              $("#pump2VoltageSet").html(pump2VoltageSet);
-          }, 75);
-      }, 500);
-    }).on("mouseup touchend", function () {
-      socket.emit("setPump2Voltage", pump2VoltageSet);
-      console.log('emitting: '+ pump2VoltageSet);
-      clearTimeout(to);
-      clearInterval(int);
-  });
+  $("#boilPlus")
+  .on("mousedown touchstart", {
+    htmlElement: "#boilPower" 
+   }, upDownPress)
+  .on("mouseup touchend", {
+    message: "setBoilPower",
+    htmlElement: "#boilPower"
+  }, upDownRelease);
 
-  $("#pump2VoltageMinus").on("mousedown touchstart", function (p2m) {
-    p2m.preventDefault();
-    pump2VoltageSet = parseFloat($('#pump2VoltageSet').html());
-    if (pump2VoltageSet > 0) pump2VoltageSet -= 0.1;
-      pump2VoltageSet = pump2VoltageSet.toFixed(2);
-      pump2VoltageSet = parseFloat(pump2VoltageSet);
-      $("#pump2VoltageSet").html(pump2VoltageSet);
-      to = setTimeout(function () {
-          int = setInterval(function () {
-              if (pump2VoltageSet > 0) pump2VoltageSet -= 0.1;
-              pump2VoltageSet = pump2VoltageSet.toFixed(2);
-              pump2VoltageSet = parseFloat(pump2VoltageSet);
-              $("#pump2VoltageSet").html(pump2VoltageSet);
-          }, 75);
-      }, 500);
-    }).on("mouseup touchend", function () {
-      socket.emit("setPump2Voltage", pump2VoltageSet);
-      console.log('emitting: '+ pump2VoltageSet);
-      clearTimeout(to);
-      clearInterval(int);
-  });
+  $("#boilMinus")
+  .on("mousedown touchstart", {
+    htmlElement: "#boilPower",
+    direction: -1 
+  }, upDownPress)
+  .on("mouseup touchend", {
+    message: "setBoilPower",
+    htmlElement: "#boilPower"
+  }, upDownRelease);
+
+  $("#mashPlus")
+  .on("mousedown touchstart", {
+    htmlElement: "#mashSet",
+    fastIncrement: 0.5,
+    slowIncrement: 0.1,
+    fastIncrementTime: 25, 
+    precision: 2  
+   }, upDownPress)
+  .on("mouseup touchend", {
+    message: "setMashTemp",
+    htmlElement: "#mashSet"
+  }, upDownRelease);
+
+  $("#mashMinus")
+  .on("mousedown touchstart", {
+    htmlElement: "#mashSet",
+    fastIncrement: 0.5,
+    slowIncrement: 0.1,
+    fastIncrementTime: 25,
+    precision: 2,   
+    direction: -1 
+  }, upDownPress)
+  .on("mouseup touchend", {
+    message: "setMashTemp",
+    htmlElement: "#mashSet"
+  }, upDownRelease);
 
 });  
 
