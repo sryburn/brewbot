@@ -1,5 +1,6 @@
+var socket = io.connect();
+
 $(document).ready(function() {
-  var socket = io.connect();
   var to, int;
 
  function onOff (event){
@@ -197,5 +198,4 @@ $(document).ready(function() {
     htmlElement: "#mashSet"
   }, upDownRelease);
 
-});  
-
+});

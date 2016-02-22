@@ -70,14 +70,6 @@ io.sockets.on('connection', function (socket) {
   socket.emit('pump2Voltage', pump2Voltage);
   socket.emit('chartUrl', chartUrl);
   
-  emitter.on("newTemps", function (temps) { 
-    socket.emit('temps', temps);
-  });
-  
-  emitter.on("pidOutput", function (pidOutput) { 
-    socket.emit('pidOutput', pidOutput);
-  });
-  
   socket.on('setTimer', function(data) {
     timer.setEndTime(data.time);
     socket.broadcast.emit('currentEndTime', {time: timer.getEndTime() });
@@ -137,23 +129,26 @@ function compute (){
     pidOutput.boilElementState = 'off'
     wpi.digitalWrite(boilElement, 0);
   }    
-  pidOutput.mashPower = (mashPid.myOutput/cycletime*100).toFixed(2);
 
-  emitter.emit('pidOutput', pidOutput);
+  pidOutput.mashPower = (mashPid.myOutput/cycletime*100).toFixed(2);
+  io.sockets.emit('pidOutput', pidOutput);
 }
 
 setInterval(compute, pidfrequency);
 
 function readTemps(callback){
   tempProbes.getAll(function (err, results) {
-    results = JSON.stringify(results); 
-    for (var i = 0; i < tempSensors.length; i++){
-      results = results.replace(tempSensors[i][0],tempSensors[i][1]);
+    if (results) {
+      results = (JSON.stringify(results) || JSON.stringify("hello")); 
+      for (var i = 0; i < tempSensors.length; i++){
+        results = results.replace(tempSensors[i][0],tempSensors[i][1]);
+      }
+      results = JSON.parse(results);
+     emitter.emit("newTemps", results);
+     io.sockets.emit('temps', results);
+      hltTemp = results.hltTemp;
+      callback();
     }
-    results = JSON.parse(results);
-    emitter.emit("newTemps", results);
-    hltTemp = results.hltTemp;
-    callback();
   }); 
 }
 
@@ -180,3 +175,4 @@ plotly.plot(initdata, initlayout, function (err, msg) {
       stream2.write(streamObject2+'\n');
     });
 });
+

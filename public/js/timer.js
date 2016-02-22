@@ -51,13 +51,11 @@
 
 ;(function() {
 
-	var timer = new Timer(),
-		socket = io.connect();
+	var timer = new Timer();
 	
 	socket.on('currentEndTime', function (data) {
 		//this is the full date time in ms.
 		timer.setEndTimeFromServer(data.time);
-		//console.log("got from server:", data.time);
 	});
 
 	$(function() {
